@@ -19,7 +19,7 @@ var svgStoreUtils = require(path.resolve(
   "../node_modules/webpack-svgstore-plugin/src/helpers/utils.js"
 ));
 
-module.exports = function(options, packageJson, chunkName) {
+module.exports = function (options, packageJson, chunkName) {
   packageJson.version = packageJsonWithVersion.version;
   const today = new Date();
   const year = today.getFullYear();
@@ -35,10 +35,7 @@ module.exports = function(options, packageJson, chunkName) {
 
   function createSVGBundle() {
     var options = {
-      fileName: path.resolve(
-        path.join("./src"),
-        "./svgbundle.html"
-      ),
+      fileName: path.resolve(path.join("./src"), "./svgbundle.html"),
       template: path.resolve(__dirname, "./svgbundle.pug"),
       svgoOptions: {
         plugins: [{ removeTitle: true }],
@@ -46,7 +43,7 @@ module.exports = function(options, packageJson, chunkName) {
       prefix: "icon-",
     };
 
-    svgStoreUtils.filesMap(path.join("./src/images/**/*.svg"), files => {
+    svgStoreUtils.filesMap(path.join("./src/images/**/*.svg"), (files) => {
       const fileContent = svgStoreUtils.createSprite(
         svgStoreUtils.parseFiles(files, options),
         options.template
@@ -161,7 +158,7 @@ module.exports = function(options, packageJson, chunkName) {
         },
         {
           test: /\.css$/,
-          loader: [
+          use: [
             MiniCssExtractPlugin.loader,
             {
               loader: "css-loader",
@@ -173,7 +170,7 @@ module.exports = function(options, packageJson, chunkName) {
         },
         {
           test: /\.s(c|a)ss$/,
-          loader: [
+          use: [
             MiniCssExtractPlugin.loader,
             {
               loader: "css-loader",
@@ -207,11 +204,11 @@ module.exports = function(options, packageJson, chunkName) {
       filename: "[name]" + (isProductionBuild ? ".min" : "") + ".js",
       library: {
         root: options.libraryName,
-        amd: '[dashedname]',
-        commonjs: '[dashedname]',
+        amd: "[dashedname]",
+        commonjs: "[dashedname]",
       },
       libraryTarget: "umd",
-      globalObject: 'this',
+      globalObject: "this",
       umdNamedDefine: true,
     },
     plugins: [
@@ -224,13 +221,13 @@ module.exports = function(options, packageJson, chunkName) {
         filename: isProductionBuild ? "[rc-name].min.css" : "[rc-name].css",
       }),
       new VueLoaderPlugin(),
-      new webpack.WatchIgnorePlugin([/svgbundle\.html/]),
+      new webpack.WatchIgnorePlugin({ paths: [/svgbundle\.html/] }),
       new webpack.BannerPlugin({
         banner: banner,
       }),
       new RemoveCoreFromName(),
       new FixStyleOnlyEntriesPlugin(),
-      new DashedNamePlugin()
+      new DashedNamePlugin(),
     ],
   };
 
